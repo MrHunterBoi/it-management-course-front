@@ -1,5 +1,6 @@
 import { modals } from '@mantine/modals';
 import LoginModal from './components/modals/LoginModal';
+import PoemsList from './components/dashboard/PoemsList';
 
 function App() {
   const openModal = () => {
@@ -12,6 +13,8 @@ function App() {
   return (
     <div>
       <button onClick={openModal}>Open modal</button>
+
+      <PoemsList />
     </div>
   );
 }
