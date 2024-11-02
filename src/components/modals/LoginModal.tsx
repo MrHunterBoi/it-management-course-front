@@ -45,6 +45,7 @@ const LoginModal = () => {
         withAsterisk
         label="Password"
         placeholder="********"
+        type='password'
         key={form.key('password')}
         {...form.getInputProps('password')}
       />
