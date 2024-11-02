@@ -1,4 +1,4 @@
-import { Badge, Button, Card, Group, Image, Text } from '@mantine/core';
+import { Badge, Card, Group, Image, Text } from '@mantine/core';
 import { FC } from 'react';
 import { IPoem } from '../../types/poem';
 import { getRandomBadgeColor } from '../../utils/colors';
@@ -18,7 +18,9 @@ const PoemItemCard: FC<PoemItemCardProps> = ({ poem }) => {
         <Text fw={500}>{poem.title}</Text>
 
         {poem.tags.map(({ tag, id }) => (
-          <Badge color={getRandomBadgeColor(id)} key={id}>{tag}</Badge>
+          <Badge color={getRandomBadgeColor(id)} key={id}>
+            {tag}
+          </Badge>
         ))}
       </Group>
 
