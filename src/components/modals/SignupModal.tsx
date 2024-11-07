@@ -4,8 +4,8 @@ import { modals } from '@mantine/modals';
 import { useState } from 'react';
 import { signUp } from '../../api/auth';
 import styles from '../../styles/components/authModal.module.scss';
-import { ApiError } from '../../types/api';
 import { ISignupFormValues } from '../../types/auth';
+import { useUserStore } from '../../zustand/userStore';
 import LoginModal from './LoginModal';
 
 const validatePassword = (value: string) => {
@@ -48,20 +48,19 @@ const SignupModal = () => {
     },
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [apiError, setApiError] = useState<ApiError | null>(null);
+  const { setUser } = useUserStore();
 
   const handleSubmit = (values: ISignupFormValues) => {
     setIsSubmitting(true);
     signUp(values)
-      .then(data => {
-        console.log('🔔🔔🔔 ~ file: SignupModal.tsx:64 ~ .then ~ data => ', data);
+      .then(res => {
+        localStorage.setItem('token', res?.access || '');
+        localStorage.setItem('refresh', res?.refresh || '');
+        setUser(res?.data || null);
 
-        // modals.closeAll();
+        modals.closeAll();
       })
-      .catch((v) => {
-        console.log('🔔🔔🔔 ~ file: SignupModal.tsx:62 ~ handleSubmit ~ v => ', v);
-        form.setErrors(v);
-      })
+      .catch(form.setErrors)
       .finally(() => {
         setIsSubmitting(false);
       });
@@ -82,6 +81,7 @@ const SignupModal = () => {
         label="Username"
         placeholder="user123"
         key={form.key('username')}
+        disabled={isSubmitting}
         {...form.getInputProps('username')}
       />
 
@@ -91,6 +91,7 @@ const SignupModal = () => {
         placeholder="********"
         key={form.key('password')}
         type="password"
+        disabled={isSubmitting}
         {...form.getInputProps('password')}
       />
 
@@ -100,6 +101,7 @@ const SignupModal = () => {
         placeholder="********"
         type="password"
         key={form.key('password2')}
+        disabled={isSubmitting}
         {...form.getInputProps('password2')}
       />
 
@@ -107,16 +109,6 @@ const SignupModal = () => {
         <Button type="submit" loading={isSubmitting}>
           Sign up
         </Button>
-
-        <Text
-          styles={{
-            root: {
-              color: 'red',
-            },
-          }}
-        >
-          {apiError?.detail}
-        </Text>
 
         <Text span>
           Already have an account?{' '}

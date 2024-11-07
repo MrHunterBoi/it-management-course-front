@@ -6,6 +6,7 @@ import { signIn } from '../../api/auth';
 import styles from '../../styles/components/authModal.module.scss';
 import { ApiError } from '../../types/api';
 import { ISigninFormValues } from '../../types/auth';
+import { useUserStore } from '../../zustand/userStore';
 import SignupModal from './SignupModal';
 
 const LoginModal = () => {
@@ -23,6 +24,7 @@ const LoginModal = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [apiError, setApiError] = useState<ApiError | null>(null);
+  const { setUser } = useUserStore();
 
   const openSignUpModal = () => {
     modals.closeAll();
@@ -37,9 +39,10 @@ const LoginModal = () => {
     setIsSubmitting(true);
 
     signIn(values)
-      .then(data => {
-        localStorage.setItem('token', data?.access || '');
-        localStorage.setItem('refresh', data?.refresh || '');
+      .then(res => {
+        localStorage.setItem('token', res?.access || '');
+        localStorage.setItem('refresh', res?.refresh || '');
+        setUser(res?.data || null);
 
         modals.closeAll();
       })
@@ -56,6 +59,7 @@ const LoginModal = () => {
         label="Username"
         placeholder="user123"
         key={form.key('username')}
+        disabled={isSubmitting}
         {...form.getInputProps('username')}
       />
 
@@ -65,6 +69,7 @@ const LoginModal = () => {
         placeholder="********"
         type="password"
         key={form.key('password')}
+        disabled={isSubmitting}
         {...form.getInputProps('password')}
       />
 

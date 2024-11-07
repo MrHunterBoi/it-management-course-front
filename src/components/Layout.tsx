@@ -1,12 +1,11 @@
-import { FC, ReactNode, useEffect, useState } from 'react';
+import { Box, Container } from '@mantine/core';
+import { useEffect, useState } from 'react';
+import { Outlet } from 'react-router-dom';
 import { getCurrentUser } from '../api/user';
 import { useUserStore } from '../zustand/userStore';
+import Header from './Header';
 
-interface LayoutProps {
-  children: ReactNode;
-}
-
-const Layout: FC<LayoutProps> = ({ children }) => {
+const Layout = () => {
   const { setUser } = useUserStore();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -24,7 +23,15 @@ const Layout: FC<LayoutProps> = ({ children }) => {
       .finally(() => setIsLoading(false));
   }, []);
 
-  return isLoading ? null : <>{children}</>;
+  return isLoading ? null : (
+    <Box>
+      <Header />
+
+      <Container size='92rem'>
+        <Outlet />
+      </Container>
+    </Box>
+  );
 };
 
 export default Layout;
