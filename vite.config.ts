@@ -6,6 +6,9 @@ import { projectConfig } from './config';
 export default defineConfig({
   plugins: [react()],
   base: projectConfig.baseRoute,
+  server: {
+    port: 3000,
+  },
   preview: {
     port: 3000,
   },

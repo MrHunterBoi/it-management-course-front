@@ -1,10 +1,13 @@
-export interface ISignupFormValues {
-  username: string;
-  password: string;
-  password2: string;
+export interface ApiError {
+  detail: string;
 }
 
-export interface ISigninFormValues {
-  username: string;
-  password: string;
+export interface ApiAuthError {
+  [key: string]: string;
+}
+
+export interface ApiResponse<T> {
+  success: boolean;
+  message: string;
+  data: T;
 }

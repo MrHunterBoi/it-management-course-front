@@ -4,7 +4,8 @@ import { modals } from '@mantine/modals';
 import { useState } from 'react';
 import { signUp } from '../../api/auth';
 import styles from '../../styles/components/authModal.module.scss';
-import { ISignupFormValues } from '../../types/api';
+import { ApiError } from '../../types/api';
+import { ISignupFormValues } from '../../types/auth';
 import LoginModal from './LoginModal';
 
 const validatePassword = (value: string) => {
@@ -47,6 +48,7 @@ const SignupModal = () => {
     },
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [apiError, setApiError] = useState<ApiError | null>(null);
 
   const handleSubmit = (values: ISignupFormValues) => {
     setIsSubmitting(true);
@@ -55,6 +57,10 @@ const SignupModal = () => {
         console.log('🔔🔔🔔 ~ file: SignupModal.tsx:64 ~ .then ~ data => ', data);
 
         // modals.closeAll();
+      })
+      .catch((v) => {
+        console.log('🔔🔔🔔 ~ file: SignupModal.tsx:62 ~ handleSubmit ~ v => ', v);
+        form.setErrors(v);
       })
       .finally(() => {
         setIsSubmitting(false);
@@ -101,6 +107,16 @@ const SignupModal = () => {
         <Button type="submit" loading={isSubmitting}>
           Sign up
         </Button>
+
+        <Text
+          styles={{
+            root: {
+              color: 'red',
+            },
+          }}
+        >
+          {apiError?.detail}
+        </Text>
 
         <Text span>
           Already have an account?{' '}

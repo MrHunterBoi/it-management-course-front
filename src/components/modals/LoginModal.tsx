@@ -4,7 +4,8 @@ import { modals } from '@mantine/modals';
 import { useState } from 'react';
 import { signIn } from '../../api/auth';
 import styles from '../../styles/components/authModal.module.scss';
-import { ISigninFormValues } from '../../types/api';
+import { ApiError } from '../../types/api';
+import { ISigninFormValues } from '../../types/auth';
 import SignupModal from './SignupModal';
 
 const LoginModal = () => {
@@ -21,6 +22,7 @@ const LoginModal = () => {
     },
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [apiError, setApiError] = useState<ApiError | null>(null);
 
   const openSignUpModal = () => {
     modals.closeAll();
@@ -31,13 +33,17 @@ const LoginModal = () => {
   };
 
   const handleSubmit = (values: ISigninFormValues) => {
+    setApiError(null);
     setIsSubmitting(true);
+
     signIn(values)
       .then(data => {
-        console.log('🔔🔔🔔 ~ file: SignupModal.tsx:64 ~ .then ~ data => ', data);
+        localStorage.setItem('token', data?.access || '');
+        localStorage.setItem('refresh', data?.refresh || '');
 
-        // modals.closeAll();
+        modals.closeAll();
       })
+      .catch(setApiError)
       .finally(() => {
         setIsSubmitting(false);
       });
@@ -66,6 +72,16 @@ const LoginModal = () => {
         <Button type="submit" loading={isSubmitting}>
           Sign in
         </Button>
+
+        <Text
+          styles={{
+            root: {
+              color: 'red',
+            },
+          }}
+        >
+          {apiError?.detail}
+        </Text>
 
         <Text span>
           Don't have an account?{' '}
