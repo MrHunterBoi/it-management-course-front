@@ -1,14 +1,11 @@
 import { Button, Stack, Text, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { modals } from '@mantine/modals';
-import styles from './AuthModal.module.scss';
+import { useState } from 'react';
+import { signUp } from '../../api/auth';
+import styles from '../../styles/components/authModal.module.scss';
+import { ISignupFormValues } from '../../types/api';
 import LoginModal from './LoginModal';
-
-interface IFormValues {
-  username: string;
-  password: string;
-  repeatPassword: string;
-}
 
 const validatePassword = (value: string) => {
   if (value.length < 8) {
@@ -35,21 +32,34 @@ const validateUsername = (value: string) => {
 };
 
 const SignupModal = () => {
-  const form = useForm<IFormValues>({
+  const form = useForm<ISignupFormValues>({
     mode: 'uncontrolled',
     initialValues: {
       username: '',
       password: '',
-      repeatPassword: '',
+      password2: '',
     },
 
     validate: {
       username: validateUsername,
       password: validatePassword,
-      repeatPassword: (value, values) =>
-        value !== values.password ? 'Passwords do not match' : null,
+      password2: (value, values) => (value !== values.password ? 'Passwords do not match' : null),
     },
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = (values: ISignupFormValues) => {
+    setIsSubmitting(true);
+    signUp(values)
+      .then(data => {
+        console.log('🔔🔔🔔 ~ file: SignupModal.tsx:64 ~ .then ~ data => ', data);
+
+        // modals.closeAll();
+      })
+      .finally(() => {
+        setIsSubmitting(false);
+      });
+  };
 
   const openLoginModal = () => {
     modals.closeAll();
@@ -60,7 +70,7 @@ const SignupModal = () => {
   };
 
   return (
-    <form onSubmit={form.onSubmit(values => console.log(values))}>
+    <form onSubmit={form.onSubmit(handleSubmit)}>
       <TextInput
         withAsterisk
         label="Username"
@@ -83,12 +93,14 @@ const SignupModal = () => {
         label="Repeat password"
         placeholder="********"
         type="password"
-        key={form.key('repeatPassword')}
-        {...form.getInputProps('repeatPassword')}
+        key={form.key('password2')}
+        {...form.getInputProps('password2')}
       />
 
       <Stack justify="center" mt="md" align="center">
-        <Button type="submit">Sign up</Button>
+        <Button type="submit" loading={isSubmitting}>
+          Sign up
+        </Button>
 
         <Text span>
           Already have an account?{' '}

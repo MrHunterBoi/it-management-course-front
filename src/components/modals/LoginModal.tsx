@@ -1,16 +1,14 @@
 import { Button, Stack, Text, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { modals } from '@mantine/modals';
-import styles from './AuthModal.module.scss';
+import { useState } from 'react';
+import { signIn } from '../../api/auth';
+import styles from '../../styles/components/authModal.module.scss';
+import { ISigninFormValues } from '../../types/api';
 import SignupModal from './SignupModal';
 
-interface IFormValues {
-  username: string;
-  password: string;
-}
-
 const LoginModal = () => {
-  const form = useForm<IFormValues>({
+  const form = useForm<ISigninFormValues>({
     mode: 'uncontrolled',
     initialValues: {
       username: '',
@@ -22,6 +20,7 @@ const LoginModal = () => {
       password: value => (value.length === 0 ? 'Please enter password' : null),
     },
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const openSignUpModal = () => {
     modals.closeAll();
@@ -31,8 +30,21 @@ const LoginModal = () => {
     });
   };
 
+  const handleSubmit = (values: ISigninFormValues) => {
+    setIsSubmitting(true);
+    signIn(values)
+      .then(data => {
+        console.log('🔔🔔🔔 ~ file: SignupModal.tsx:64 ~ .then ~ data => ', data);
+
+        // modals.closeAll();
+      })
+      .finally(() => {
+        setIsSubmitting(false);
+      });
+  };
+
   return (
-    <form onSubmit={form.onSubmit(values => console.log(values))}>
+    <form onSubmit={form.onSubmit(handleSubmit)}>
       <TextInput
         withAsterisk
         label="Username"
@@ -45,13 +57,15 @@ const LoginModal = () => {
         withAsterisk
         label="Password"
         placeholder="********"
-        type='password'
+        type="password"
         key={form.key('password')}
         {...form.getInputProps('password')}
       />
 
       <Stack justify="center" mt="md" align="center">
-        <Button type="submit">Sign in</Button>
+        <Button type="submit" loading={isSubmitting}>
+          Sign in
+        </Button>
 
         <Text span>
           Don't have an account?{' '}

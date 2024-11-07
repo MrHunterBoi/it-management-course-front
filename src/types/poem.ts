@@ -1,3 +1,6 @@
+import { IGenre } from './genre';
+import { ITag } from './tag';
+
 export interface IPoem {
   id: number;
   creator: ICreator;
@@ -8,16 +11,6 @@ export interface IPoem {
   tags: ITag[];
   title: string;
   views_counter: number;
-}
-
-export interface IGenre {
-  id: number;
-  genre: string;
-}
-
-export interface ITag {
-  id: number;
-  tag: string;
 }
 
 export interface ICreator {

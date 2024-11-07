@@ -15,9 +15,8 @@ const totallyNotFakeData: IPoem[] = [
       genre: 'Horror',
       id: 1,
     },
-    id: 1,
-    image:
-      'https://cdn.discordapp.com/attachments/664781908202225664/1302198649173835837/Eyes_open_Boss.jfif?ex=67273e7f&is=6725ecff&hm=fa0552eb7b2bd03882756adf1cf3228dee89fb2188fe019a5a8efa5e8b863225&',
+    id: 2,
+    image: 'https://media1.tenor.com/m/E-u6yuhVldsAAAAd/fireflysegsalarm-star-rail.gif',
     tags: [
       {
         id: 1,
@@ -43,11 +42,10 @@ const totallyNotFakeData: IPoem[] = [
     description: 'Epic description',
     genre: {
       genre: 'Fantasy',
-      id: 1,
+      id: 2,
     },
     id: 1,
-    image:
-      'https://cdn.discordapp.com/attachments/664781908202225664/1302198649173835837/Eyes_open_Boss.jfif?ex=67273e7f&is=6725ecff&hm=fa0552eb7b2bd03882756adf1cf3228dee89fb2188fe019a5a8efa5e8b863225&',
+    image: 'https://media1.tenor.com/m/E-u6yuhVldsAAAAd/fireflysegsalarm-star-rail.gif',
     tags: [
       {
         id: 1,
@@ -76,8 +74,7 @@ const totallyNotFakeData: IPoem[] = [
       id: 3,
     },
     id: 3,
-    image:
-      'https://cdn.discordapp.com/attachments/664781908202225664/1302198649173835837/Eyes_open_Boss.jfif?ex=67273e7f&is=6725ecff&hm=fa0552eb7b2bd03882756adf1cf3228dee89fb2188fe019a5a8efa5e8b863225&',
+    image: 'https://media1.tenor.com/m/E-u6yuhVldsAAAAd/fireflysegsalarm-star-rail.gif',
     tags: [
       {
         id: 1,
