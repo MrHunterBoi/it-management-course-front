@@ -1,7 +1,7 @@
 import { Grid, Stack } from '@mantine/core';
 import Filters from '../../components/dashboard/filters/Filters';
 import SearchBar from '../../components/dashboard/filters/SearchBar';
-import PoemsList from '../../components/dashboard/PoemsList';
+import PoemsList from '../../components/dashboard/StoriesList';
 
 const Stories = () => {
   return (

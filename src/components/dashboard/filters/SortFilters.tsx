@@ -1,18 +1,20 @@
 import { Button, Group, Select } from '@mantine/core';
 import { IconSortAscending, IconSortDescending } from '@tabler/icons-react';
-import { useFilterStore } from '../../../zustand/filterStore';
+import { serializedSortBy } from '../../../utils/query';
+import { useStoriesStore } from '../../../zustand/storiesStore';
+import { SortBy } from '../../../types/sort';
 
-const filters = ['Popularity', 'Date', 'Likes'];
+const filters = Object.keys(serializedSortBy);
 
 const SortFilters = () => {
-  const { sortBy, setSortBy, sortType, setSortType } = useFilterStore();
+  const { sortBy, setSortBy, sortType, setSortType } = useStoriesStore();
 
   return (
     <Group>
-      <Select data={filters} value={sortBy} onChange={value => setSortBy(value!)} flex={1} />
+      <Select data={filters} value={sortBy} onChange={value => setSortBy(value! as SortBy)} flex={1} />
 
-      <Button variant="default" onClick={() => setSortType(sortType === 'Desc' ? 'Asc' : 'Desc')}>
-        {sortType === 'Desc' ? <IconSortDescending size={16} /> : <IconSortAscending size={16} />}
+      <Button variant="default" onClick={() => setSortType(sortType === '-' ? '' : '-')}>
+        {sortType === '-' ? <IconSortDescending size={16} /> : <IconSortAscending size={16} />}
       </Button>
     </Group>
   );

@@ -1,17 +1,31 @@
-import { TextInput } from '@mantine/core';
+import { Group, TextInput } from '@mantine/core';
 import { IconSearch } from '@tabler/icons-react';
-import { useFilterStore } from '../../../zustand/filterStore';
+import { useEffect, useRef } from 'react';
+import { scrollToRef } from '../../../utils/scroll';
+import { useStoriesStore } from '../../../zustand/storiesStore';
+import LoadingSpinner from '../../common/LoadingSpinner';
 
 const SearchBar = () => {
-  const { search, setSearch } = useFilterStore();
+  const { search, setSearch, isFetching, stories, page } = useStoriesStore();
+
+  const divRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    scrollToRef(divRef);
+  }, [page]);
 
   return (
-    <TextInput
-      placeholder="Search poems..."
-      leftSection={<IconSearch />}
-      value={search}
-      onChange={(event) => setSearch(event.target.value)}
-    />
+    <Group ref={divRef} justify="space-between">
+      <TextInput
+        placeholder="Search poems..."
+        leftSection={<IconSearch />}
+        value={search}
+        onChange={event => setSearch(event.target.value)}
+        miw={'40%'}
+      />
+
+      {isFetching && stories.length !== 0 && <LoadingSpinner size={28} />}
+    </Group>
   );
 };
 

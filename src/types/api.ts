@@ -11,3 +11,10 @@ export interface ApiResponse<T> {
   message: string;
   data: T;
 }
+
+export interface ApiPagination {
+  current: number;
+  has_next: boolean;
+  has_previous: boolean;
+  total: number;
+}

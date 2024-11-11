@@ -28,6 +28,10 @@ import { useUserStore } from '../zustand/userStore';
 import LoginModal from './modals/LoginModal';
 import SignupModal from './modals/SignupModal';
 
+const links = [
+  { link: '/stories', label: 'Stories' },
+];
+
 const Header = () => {
   const theme = useMantineTheme();
   const [opened, { toggle }] = useDisclosure(false);
@@ -62,6 +66,19 @@ const Header = () => {
           <img src="logoipsum-330.svg" />
         </Link>
 
+        <Group ml={50} gap={5} className={classes.links} visibleFrom="sm">
+          {links.map(link => (
+            <Link
+              key={link.label}
+              to={link.link}
+              className={classes.link}
+              onClick={event => event.preventDefault()}
+            >
+              {link.label}
+            </Link>
+          ))}
+        </Group>
+
         <Burger opened={opened} onClick={toggle} hiddenFrom="xs" size="sm" />
 
         {user ? (
@@ -78,10 +95,10 @@ const Header = () => {
                 className={cx(classes.user, { [classes.userActive]: userMenuOpened })}
               >
                 <Group gap={7}>
-                  <Avatar src={user?.avatar} alt={user?.user.username} radius="xl" size={20} />
+                  <Avatar src={user?.avatar} alt={user?.user?.username} radius="xl" size={20} />
 
                   <Text fw={500} size="sm" lh={1} mr={3}>
-                    {user?.user.username}
+                    {user?.user?.username}
                   </Text>
                   <IconChevronDown style={{ width: rem(12), height: rem(12) }} stroke={1.5} />
                 </Group>

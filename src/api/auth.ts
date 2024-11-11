@@ -7,7 +7,7 @@ export const signUp = async (data: ISignupFormValues): Promise<AuthResponse> => 
     data,
   });
 
-  if (!res?.data?.message?.success) {
+  if (!res?.data?.message?.success && !res.data.success) {
     throw handleAuthError(res.data.message);
   }
 

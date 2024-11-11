@@ -3,11 +3,11 @@ import { useEffect, useMemo, useState } from 'react';
 import { fetchTags } from '../../../api/tags';
 import { ITag } from '../../../types/tag';
 import { getRandomBadgeColor } from '../../../utils/colors';
-import { useFilterStore } from '../../../zustand/filterStore';
+import { useStoriesStore } from '../../../zustand/storiesStore';
 import BadgeX from '../../common/BadgeX';
 
 const FiltersTags = () => {
-  const { tags: tagsSelected, addTag, removeTag } = useFilterStore();
+  const { tags: tagsSelected, addTag, removeTag } = useStoriesStore();
   const [value, setValue] = useState('');
   const [tags, setTags] = useState<ITag[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -19,7 +19,9 @@ const FiltersTags = () => {
   useEffect(() => {
     setIsLoading(true);
     fetchTags()
-      .then(setTags)
+      .then(res => {
+        setTags(res?.data.stories || []);
+      })
       .finally(() => setIsLoading(false));
   }, []);
 

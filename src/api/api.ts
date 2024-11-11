@@ -6,7 +6,7 @@ const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 const apiCall = (url: string, token?: string, options?: AxiosRequestConfig) => {
   return axios({
     method: 'GET',
-    url: `${BACKEND_URL}${url}`,
+    url: `${BACKEND_URL}/api${url}`,
     ...options,
     headers: {
       ...options?.headers,
@@ -26,13 +26,13 @@ export const fetchApi = async (
     return response;
   } catch (response: any) {
     if (response.status !== 401) {
-      return response;
+      throw response;
     }
 
     const refresh = localStorage.getItem('refresh');
     if (!refresh) {
       localStorage.removeItem('token');
-      return response;
+      throw response;
     } else {
       const refreshedToken = await refreshToken();
 
@@ -42,8 +42,17 @@ export const fetchApi = async (
         throw response;
       }
 
-      localStorage.setItem('token', refreshedToken.data.access);
-      return await apiCall(url, refreshedToken.data.access, options);
+      try {
+        localStorage.setItem('token', refreshedToken.data.access);
+        return await apiCall(url, refreshedToken.data.access, options);
+      } catch (e: any) {
+        if (e.status === 401) {
+          localStorage.removeItem('refresh');
+          localStorage.removeItem('token');
+        }
+
+        throw e;
+      }
     }
   }
 };
@@ -80,4 +89,8 @@ export const handleAuthError = (message: any) => {
   }, {} as Record<string, string>);
 
   throw errors as ApiAuthError;
+};
+
+export const getStaticFile = (url: string) => {
+  return `${BACKEND_URL}${url}`;
 };
