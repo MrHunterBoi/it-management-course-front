@@ -8,7 +8,7 @@ import { SortType } from '../../types/sort';
 import { serializedSortBy } from '../../utils/query';
 import { useStoriesStore } from '../../zustand/storiesStore';
 import LoadingSpinner from '../common/LoadingSpinner';
-import PoemItemCard from './StoryItemCard';
+import StoryItemCard from './StoryItemCard';
 
 const PoemsList = () => {
   const {
@@ -33,7 +33,7 @@ const PoemsList = () => {
     getStories({
       ...(genres.size > 0 && { genres: [...genres].join(',') }),
       ...(search && { search_prompt: search }),
-      ...(tags.size > 0 && { tags: [...tags].map(tag => tag[1].id).join(',') }),
+      ...(tags.size > 0 && { tags: [...tags].join(',') }),
       ...(pagination && { page: `${page}` }),
       sort_by: `${sortType}${serializedSortBy[sortBy]}`,
     })
@@ -55,10 +55,10 @@ const PoemsList = () => {
       setSearchParams({
         ...(genres.size > 0 && { genres: [...genres].join(',') }),
         ...(search && { search }),
-        ...(tags.size > 0 && { tags: [...tags].map(tag => tag[1].id).join(',') }),
+        ...(tags.size > 0 && { tags: [...tags].join(',') }),
         ...(pagination && { page: `${page}` }),
         sortBy: serializedSortBy[sortBy],
-        sortType: sortType ? SortType.ASC : SortType.DESC,
+        sortType: sortType ? SortType.DESC : SortType.ASC,
       });
     },
     [genres, search, tags, page, sortBy, sortType],
@@ -94,7 +94,7 @@ const PoemsList = () => {
     <>
       <SimpleGrid cols={4}>
         {stories.map(poem => (
-          <PoemItemCard story={poem} key={poem.id} />
+          <StoryItemCard story={poem} key={poem.id} />
         ))}
       </SimpleGrid>
 

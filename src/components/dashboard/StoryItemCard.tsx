@@ -1,4 +1,13 @@
-import { Badge, Card, Group, Image, Stack, Text } from '@mantine/core';
+import {
+  Badge,
+  Card,
+  CardProps,
+  Group,
+  Image,
+  PolymorphicComponentProps,
+  Stack,
+  Text,
+} from '@mantine/core';
 import { FC } from 'react';
 import { getStaticFile } from '../../api/api';
 import styles from '../../styles/components/storyItemCard.module.scss';
@@ -6,11 +15,12 @@ import { IStory } from '../../types/story';
 import { getRandomBadgeColor } from '../../utils/colors';
 import { useStoriesStore } from '../../zustand/storiesStore';
 
-interface PoemItemCardProps {
+interface PoemItemCardProps extends Partial<PolymorphicComponentProps<CardProps>> {
   story: IStory;
+  h?: string;
 }
 
-const PoemItemCard: FC<PoemItemCardProps> = ({ story }) => {
+const StoryItemCard: FC<PoemItemCardProps> = ({ story, h }) => {
   const { isFetching } = useStoriesStore();
 
   return (
@@ -20,6 +30,7 @@ const PoemItemCard: FC<PoemItemCardProps> = ({ story }) => {
       radius="md"
       withBorder
       className={`${styles.item} ${isFetching ? styles.fetching : ''}`}
+      {...(h && { h })}
     >
       <Card.Section>
         <Image src={getStaticFile(story.post_image)} height={200} alt={story.post_title} />
@@ -54,4 +65,4 @@ const PoemItemCard: FC<PoemItemCardProps> = ({ story }) => {
   );
 };
 
-export default PoemItemCard;
+export default StoryItemCard;

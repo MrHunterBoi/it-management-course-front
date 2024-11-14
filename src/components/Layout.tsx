@@ -1,13 +1,13 @@
 import { Box, Container } from '@mantine/core';
 import { useEffect, useState } from 'react';
 import { Outlet } from 'react-router-dom';
-import { getCurrentUser } from '../api/user';
+import { getProfile } from '../api/profiles';
 import { useUserStore } from '../zustand/userStore';
 import Header from './Header';
 
 const Layout = () => {
   const { setUser } = useUserStore();
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -18,7 +18,7 @@ const Layout = () => {
     }
 
     setIsLoading(true);
-    getCurrentUser()
+    getProfile()
       .then(response => setUser(response?.data.profile || null))
       .finally(() => setIsLoading(false));
   }, []);
@@ -27,7 +27,7 @@ const Layout = () => {
     <Box>
       <Header />
 
-      <Container size='92rem'>
+      <Container size="92rem">
         <Outlet />
       </Container>
     </Box>

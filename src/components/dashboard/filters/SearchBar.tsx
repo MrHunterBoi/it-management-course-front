@@ -21,7 +21,7 @@ const SearchBar = () => {
         leftSection={<IconSearch />}
         value={search}
         onChange={event => setSearch(event.target.value)}
-        miw={'40%'}
+        flex={1}
       />
 
       {isFetching && stories.length !== 0 && <LoadingSpinner size={28} />}

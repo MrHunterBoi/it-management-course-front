@@ -7,14 +7,18 @@ import { useStoriesStore } from '../../../zustand/storiesStore';
 import BadgeX from '../../common/BadgeX';
 
 const FiltersTags = () => {
-  const { tags: tagsSelected, addTag, removeTag } = useStoriesStore();
+  const { tags: tagsSelectedIds, addTag, removeTag } = useStoriesStore();
   const [value, setValue] = useState('');
   const [tags, setTags] = useState<ITag[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const tagsOptions = useMemo(() => {
-    return tags.filter(tag => !tagsSelected.has(tag.id));
-  }, [tagsSelected, tags]);
+    return tags.filter(tag => !tagsSelectedIds.has(tag.id));
+  }, [tagsSelectedIds, tags]);
+
+  const tagsSelected = useMemo(() => {
+    return tags.filter(tag => tagsSelectedIds.has(tag.id));
+  }, [tagsSelectedIds, tags]);
 
   useEffect(() => {
     setIsLoading(true);
@@ -36,10 +40,7 @@ const FiltersTags = () => {
         placeholder="Search tags..."
         rightSection
         onChange={(_value, option) => {
-          addTag({
-            id: +option.value,
-            tag: option.label,
-          });
+          addTag(+option.value);
         }}
         searchValue={value}
         onSearchChange={setValue}
@@ -55,7 +56,7 @@ const FiltersTags = () => {
             key={tag.id}
             tag={tag}
             color={getRandomBadgeColor(tag.id)}
-            onClick={() => removeTag(tag)}
+            onClick={() => removeTag(tag.id)}
           />
         ))}
       </Group>

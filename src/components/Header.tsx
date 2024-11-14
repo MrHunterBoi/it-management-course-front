@@ -19,18 +19,19 @@ import {
   IconMessage,
   IconSettings,
   IconStar,
+  IconUser,
 } from '@tabler/icons-react';
 import cx from 'clsx';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { getStaticFile } from '../api/api';
 import classes from '../styles/components/header.module.scss';
 import { useUserStore } from '../zustand/userStore';
 import LoginModal from './modals/LoginModal';
+import ProfileSettingsModal from './modals/ProfileSettingsModal';
 import SignupModal from './modals/SignupModal';
 
-const links = [
-  { link: '/stories', label: 'Stories' },
-];
+const links = [{ link: '/stories', label: 'Stories' }];
 
 const Header = () => {
   const theme = useMantineTheme();
@@ -49,6 +50,14 @@ const Header = () => {
     modals.open({
       title: 'Sign up',
       children: <SignupModal />,
+    });
+  };
+
+  const openSettingsModal = () => {
+    modals.open({
+      title: 'Settings',
+      children: <ProfileSettingsModal />,
+      size: 'xl',
     });
   };
 
@@ -95,11 +104,17 @@ const Header = () => {
                 className={cx(classes.user, { [classes.userActive]: userMenuOpened })}
               >
                 <Group gap={7}>
-                  <Avatar src={user?.avatar} alt={user?.user?.username} radius="xl" size={20} />
+                  <Avatar
+                    src={getStaticFile(user?.avatar)}
+                    alt={user?.user?.username}
+                    radius="xl"
+                    size={20}
+                  />
 
                   <Text fw={500} size="sm" lh={1} mr={3}>
                     {user?.user?.username}
                   </Text>
+
                   <IconChevronDown style={{ width: rem(12), height: rem(12) }} stroke={1.5} />
                 </Group>
               </UnstyledButton>
@@ -139,20 +154,25 @@ const Header = () => {
                 Your comments
               </Menu.Item>
 
+              <Menu.Divider />
+
+              <Menu.Item
+                leftSection={
+                  <IconUser style={{ width: rem(16), height: rem(16) }} stroke={1.5} />
+                }
+              >
+                <Link to="/profile" style={{ textDecoration: 'none', color: 'inherit' }}>
+                  Profile
+                </Link>
+              </Menu.Item>
+
               <Menu.Item
                 leftSection={
                   <IconSettings style={{ width: rem(16), height: rem(16) }} stroke={1.5} />
                 }
+                onClick={openSettingsModal}
               >
-                <Link
-                  to="/profile/settings"
-                  style={{
-                    textDecoration: 'none',
-                    color: 'inherit',
-                  }}
-                >
-                  Settings
-                </Link>
+                Settings
               </Menu.Item>
               <Menu.Item
                 leftSection={
