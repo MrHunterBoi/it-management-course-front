@@ -9,6 +9,7 @@ import {
   Text,
 } from '@mantine/core';
 import { FC } from 'react';
+import { Link } from 'react-router-dom';
 import { getStaticFile } from '../../api/api';
 import styles from '../../styles/components/storyItemCard.module.scss';
 import { IStory } from '../../types/story';
@@ -24,44 +25,46 @@ const StoryItemCard: FC<PoemItemCardProps> = ({ story, h }) => {
   const { isFetching } = useStoriesStore();
 
   return (
-    <Card
-      shadow="sm"
-      padding="lg"
-      radius="md"
-      withBorder
-      className={`${styles.item} ${isFetching ? styles.fetching : ''}`}
-      {...(h && { h })}
-    >
-      <Card.Section>
-        <Image src={getStaticFile(story.post_image)} height={200} alt={story.post_title} />
-      </Card.Section>
+    <Link to={`/stories/${story.id}`} style={{ textDecoration: 'none' }}>
+      <Card
+        shadow="sm"
+        padding="lg"
+        radius="md"
+        withBorder
+        className={`${styles.item} ${isFetching ? styles.fetching : ''}`}
+        {...(h && { h })}
+      >
+        <Card.Section>
+          <Image src={getStaticFile(story.post_image)} height={200} alt={story.post_title} />
+        </Card.Section>
 
-      <Stack gap={0} mt="md" mb="xs">
-        <Text size="xl" fw={500}>
-          {story.post_title}
-        </Text>
-
-        <Group justify="space-between">
-          <Text size="xs" c="gray">
-            By {story.creator_id.writer_pseudo}, {story.created}
+        <Stack gap={0} mt="md" mb="xs">
+          <Text size="xl" fw={500}>
+            {story.post_title}
           </Text>
 
-          <Badge color={getRandomBadgeColor(story.genre.id)} size="md" variant="dot">
-            {story.genre.genre}
-          </Badge>
+          <Group justify="space-between">
+            <Text size="xs" c="gray">
+              By {story.creator_id.writer_pseudo}, {story.created}
+            </Text>
+
+            <Badge color={getRandomBadgeColor(story.genre.id)} size="md" variant="dot">
+              {story.genre.genre}
+            </Badge>
+          </Group>
+        </Stack>
+
+        <Text>{story.post_description}</Text>
+
+        <Group mt="md" mb="xs">
+          {story.tags.map(({ tag, id }) => (
+            <Badge color={getRandomBadgeColor(id)} key={id}>
+              {tag}
+            </Badge>
+          ))}
         </Group>
-      </Stack>
-
-      <Text>{story.post_description}</Text>
-
-      <Group mt="md" mb="xs">
-        {story.tags.map(({ tag, id }) => (
-          <Badge color={getRandomBadgeColor(id)} key={id}>
-            {tag}
-          </Badge>
-        ))}
-      </Group>
-    </Card>
+      </Card>
+    </Link>
   );
 };
 

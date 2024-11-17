@@ -1,10 +1,10 @@
 import { IGenre } from './genre';
 import { ITag } from './tag';
-import { IWriter } from './user';
+import { IUser } from './user';
 
 export interface IStory {
   id: number;
-  creator_id: IWriter;
+  creator_id: IUser;
   created: string;
   genre: IGenre;
   tags: ITag[];

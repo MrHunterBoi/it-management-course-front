@@ -8,17 +8,15 @@ import {
   rem,
   Text,
   UnstyledButton,
-  useMantineTheme,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
 import {
   IconChevronDown,
-  IconHeart,
+  IconFilePlus,
   IconLogout,
-  IconMessage,
+  IconNotes,
   IconSettings,
-  IconStar,
   IconUser,
 } from '@tabler/icons-react';
 import cx from 'clsx';
@@ -31,10 +29,7 @@ import LoginModal from './modals/LoginModal';
 import ProfileSettingsModal from './modals/ProfileSettingsModal';
 import SignupModal from './modals/SignupModal';
 
-const links = [{ link: '/stories', label: 'Stories' }];
-
 const Header = () => {
-  const theme = useMantineTheme();
   const [opened, { toggle }] = useDisclosure(false);
   const [userMenuOpened, setUserMenuOpened] = useState(false);
   const { user, logout } = useUserStore();
@@ -75,19 +70,6 @@ const Header = () => {
           <img src="logoipsum-330.svg" />
         </Link>
 
-        <Group ml={50} gap={5} className={classes.links} visibleFrom="sm">
-          {links.map(link => (
-            <Link
-              key={link.label}
-              to={link.link}
-              className={classes.link}
-              onClick={event => event.preventDefault()}
-            >
-              {link.label}
-            </Link>
-          ))}
-        </Group>
-
         <Burger opened={opened} onClick={toggle} hiddenFrom="xs" size="sm" />
 
         {user ? (
@@ -122,44 +104,38 @@ const Header = () => {
             <Menu.Dropdown>
               <Menu.Item
                 leftSection={
-                  <IconHeart
+                  <IconNotes
+                    color="#2796d6"
                     style={{ width: rem(16), height: rem(16) }}
-                    color={theme.colors.red[6]}
                     stroke={1.5}
                   />
                 }
               >
-                Liked posts
+                <Link to="/stories" style={{ textDecoration: 'none', color: 'inherit' }}>
+                  Stories
+                </Link>
               </Menu.Item>
-              <Menu.Item
-                leftSection={
-                  <IconStar
-                    style={{ width: rem(16), height: rem(16) }}
-                    color={theme.colors.yellow[6]}
-                    stroke={1.5}
-                  />
-                }
-              >
-                Saved posts
-              </Menu.Item>
-              <Menu.Item
-                leftSection={
-                  <IconMessage
-                    style={{ width: rem(16), height: rem(16) }}
-                    color={theme.colors.blue[6]}
-                    stroke={1.5}
-                  />
-                }
-              >
-                Your comments
-              </Menu.Item>
+
+              {user.writer && (
+                <Menu.Item
+                  leftSection={
+                    <IconFilePlus
+                      color="#27d656"
+                      style={{ width: rem(16), height: rem(16) }}
+                      stroke={1.5}
+                    />
+                  }
+                >
+                  <Link to="/stories/new" style={{ textDecoration: 'none', color: 'inherit' }}>
+                    Create story
+                  </Link>
+                </Menu.Item>
+              )}
 
               <Menu.Divider />
 
               <Menu.Item
-                leftSection={
-                  <IconUser style={{ width: rem(16), height: rem(16) }} stroke={1.5} />
-                }
+                leftSection={<IconUser style={{ width: rem(16), height: rem(16) }} stroke={1.5} />}
               >
                 <Link to="/profile" style={{ textDecoration: 'none', color: 'inherit' }}>
                   Profile
@@ -174,11 +150,17 @@ const Header = () => {
               >
                 Settings
               </Menu.Item>
+
               <Menu.Item
                 leftSection={
-                  <IconLogout style={{ width: rem(16), height: rem(16) }} stroke={1.5} />
+                  <IconLogout
+                    color="red"
+                    style={{ width: rem(16), height: rem(16) }}
+                    stroke={1.5}
+                  />
                 }
                 onClick={logout}
+                c="red"
               >
                 Logout
               </Menu.Item>

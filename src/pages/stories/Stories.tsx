@@ -3,7 +3,7 @@ import { FC, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import Filters from '../../components/dashboard/filters/Filters';
 import SearchBar from '../../components/dashboard/filters/SearchBar';
-import PoemsList from '../../components/dashboard/StoriesList';
+import StoriesList from '../../components/dashboard/StoriesList';
 import { SortType } from '../../types/sort';
 import { deserializedSortBy } from '../../utils/query';
 import { useStoriesStore } from '../../zustand/storiesStore';
@@ -54,7 +54,7 @@ const Stories: FC = () => {
           <Stack>
             <SearchBar />
 
-            <PoemsList />
+            <StoriesList />
           </Stack>
         </Grid.Col>
       </Grid>

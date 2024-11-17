@@ -10,7 +10,7 @@ import { useStoriesStore } from '../../zustand/storiesStore';
 import LoadingSpinner from '../common/LoadingSpinner';
 import StoryItemCard from './StoryItemCard';
 
-const PoemsList = () => {
+const StoriesList = () => {
   const {
     genres,
     search,
@@ -107,4 +107,4 @@ const PoemsList = () => {
   );
 };
 
-export default PoemsList;
+export default StoriesList;

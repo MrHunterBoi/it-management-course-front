@@ -1,21 +1,21 @@
 import { Group, TextInput } from '@mantine/core';
 import { IconSearch } from '@tabler/icons-react';
-import { useEffect, useRef } from 'react';
-import { scrollToRef } from '../../../utils/scroll';
+import { useEffect } from 'react';
 import { useStoriesStore } from '../../../zustand/storiesStore';
 import LoadingSpinner from '../../common/LoadingSpinner';
 
 const SearchBar = () => {
   const { search, setSearch, isFetching, stories, page } = useStoriesStore();
 
-  const divRef = useRef<HTMLDivElement | null>(null);
-
   useEffect(() => {
-    scrollToRef(divRef);
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
   }, [page]);
 
   return (
-    <Group ref={divRef} justify="space-between">
+    <Group justify="space-between">
       <TextInput
         placeholder="Search poems..."
         leftSection={<IconSearch />}
