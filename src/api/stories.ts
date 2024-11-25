@@ -46,6 +46,47 @@ export const getStory = async (
   }
 };
 
+export const createStory = async (
+  data: FormData
+): Promise<ApiResponse<IStory> | undefined> => {
+  try {
+    const res = await fetchApi('/stories/manipulate', {
+      method: 'POST',
+      data,
+    });
+
+    return res.data;
+  } catch (e) {
+    handleError(e);
+  }
+};
+
+export const editStory = async (data: FormData): Promise<ApiResponse<IStory> | undefined> => {
+  try {
+    const res = await fetchApi('/stories/manipulate', {
+      method: 'PATCH',
+      data,
+    });
+
+    return res.data;
+  } catch (e) {
+    handleError(e);
+  }
+};
+
+export const deleteStory = async (data: FormData): Promise<ApiResponse<IStory> | undefined> => {
+  try {
+    const res = await fetchApi('/stories/manipulate', {
+      method: 'DELETE',
+      data,
+    });
+
+    return res.data;
+  } catch (e) {
+    handleError(e);
+  }
+};
+
 export const getWriterStories = async (
   userId?: string
 ): Promise<ApiResponse<StoriesResponse> | undefined> => {
@@ -94,7 +135,7 @@ export const getLikedStories = async (
 export const reactToStory = async (
   storyId: string,
   type: 'like' | 'dislike' = 'like'
-): Promise<ApiResponse<{ likes: number; dislikes: number }> | undefined> => {
+): Promise<ApiResponse<IStory> | undefined> => {
   try {
     const res = await fetchApi('/stories/react', {
       method: 'POST',

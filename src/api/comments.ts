@@ -13,12 +13,6 @@ export interface CommentsResponse {
   data: IComment[];
 }
 
-interface CommentReactionResponse {
-  likes_count: number;
-  dislikes_count: number;
-  replies_count: number;
-}
-
 export const getComments = async (
   query?: Partial<Record<CommentsQueryParams, string>>
 ): Promise<ApiResponse<CommentsResponse> | undefined> => {
@@ -36,7 +30,7 @@ export const getComments = async (
 export const reactToComment = async (
   commentId: string,
   type: 'like' | 'dislike' = 'like'
-): Promise<ApiResponse<CommentReactionResponse> | undefined> => {
+): Promise<ApiResponse<IComment> | undefined> => {
   try {
     const res = await fetchApi('/comments/react', {
       method: 'POST',

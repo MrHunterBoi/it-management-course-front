@@ -1,13 +1,16 @@
 import { Carousel } from '@mantine/carousel';
 import { Card, Container, Divider, Grid, Group, Image, Stack, Text } from '@mantine/core';
 import { IconCat } from '@tabler/icons-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { getStaticFile } from '../../api/api';
 import { getLikedStories, getViewedStories, getWriterStories } from '../../api/stories';
 import LabelValue from '../../components/common/LabelValue';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import StoryItemCard from '../../components/dashboard/StoryItemCard';
+import { useWindowSize } from '../../hooks/useWindowSize';
+import { WindowBreakpoints } from '../../types/breakpoints';
 import { IStory } from '../../types/story';
 import { useUserStore } from '../../zustand/userStore';
 
@@ -18,8 +21,10 @@ interface IProfileStories {
 }
 
 const Profile = () => {
+  const { t } = useTranslation();
   const { user } = useUserStore();
   const navigate = useNavigate();
+  const size = useWindowSize();
 
   const [stories, setStories] = useState<IProfileStories>({
     writerStories: [],
@@ -67,11 +72,46 @@ const Profile = () => {
     }
   }, [user]);
 
+  const sliderConfig = useMemo(() => {
+    if (size[0] > WindowBreakpoints.XL) {
+      return {
+        slideSize: '33.33333%',
+        slidesToScroll: 3,
+      };
+    }
+
+    if (size[0] > WindowBreakpoints.MD) {
+      return {
+        slideSize: '50%',
+        slidesToScroll: 2,
+      };
+    }
+
+    if (size[0] > WindowBreakpoints.SM) {
+      return {
+        slideSize: '100%',
+        slidesToScroll: 1,
+      };
+    }
+
+    if (size[0] > WindowBreakpoints.XS) {
+      return {
+        slideSize: '50%',
+        slidesToScroll: 2,
+      };
+    }
+
+    return {
+      slideSize: '100%',
+      slidesToScroll: 1,
+    };
+  }, [size]);
+
   return (
     <Container size="xl" mb={32}>
       <Stack gap={32}>
         <Grid>
-          <Grid.Col span={3}>
+          <Grid.Col span={{ base: 12, sm: 5, md: 4 }}>
             <Card style={{ height: '100%' }} shadow="sm" padding="lg" radius="md" withBorder>
               <Stack gap={0}>
                 <Stack align="center" gap={0}>
@@ -89,52 +129,55 @@ const Profile = () => {
                     {user?.user.username}
                   </Text>
 
-                  <Text c="gray">{user?.writer ? user.writer.writer_pseudo : 'Reader'}</Text>
+                  <Text c="gray">
+                    {user?.writer ? user.writer.writer_pseudo : t('profileReader')}
+                  </Text>
                 </Stack>
 
                 <Divider my="md" w="100%" />
 
                 {user?.writer ? (
                   <>
-                    <LabelValue label="Stories" value={`${stories.writerStories.length}`} />
-
                     <LabelValue
-                      label="Story views"
-                      value={`${user.writer.total_story_views_counter}`}
+                      label={t('profileStories')}
+                      value={`${stories.writerStories?.length || 0}`}
                     />
 
-                    <LabelValue label="Likes" value={`${user.writer.total_likes_counter}`} />
+                    <LabelValue
+                      label={t('profileStoryViews')}
+                      value={`${user.writer.total_story_views}`}
+                    />
+
+                    <LabelValue
+                      label={t('profileLikes')}
+                      value={`${user.writer.total_story_likes}`}
+                    />
                   </>
                 ) : (
-                  <>
-                    <LabelValue
-                      label="Stories read"
-                      value={`${user?.reader.total_stories_viewed}`}
-                    />
-
-                    <LabelValue label="Following" value={`${user?.reader.subscribed_to.length}`} />
-                  </>
+                  <LabelValue
+                    label={t('profileStoriesViewed')}
+                    value={`${user?.reader.total_stories_viewed}`}
+                  />
                 )}
               </Stack>
             </Card>
           </Grid.Col>
 
-          <Grid.Col span={9}>
+          <Grid.Col span={{ base: 12, sm: 7, md: 8 }}>
             <Stack h="100%">
               <Text ml={32} size="32px" fw="bold">
-                Written stories
+                {t('profileWrittenStories')}
               </Text>
 
               {isLoadingStories ? (
                 <Group justify="center" align="center" mih={200}>
                   <LoadingSpinner size={64} />
                 </Group>
-              ) : stories.writerStories.length > 0 ? (
+              ) : stories.writerStories?.length > 0 ? (
                 <Carousel
-                  slideSize="33.3333%"
+                  {...sliderConfig}
                   slideGap="md"
                   align="start"
-                  slidesToScroll={3}
                   styles={{
                     controls: {
                       paddingInline: 0,
@@ -156,7 +199,7 @@ const Profile = () => {
                   <IconCat size={64} color="gray" />
 
                   <Text size="xl" c="gray">
-                    Nothing here, but us cats...
+                    {t('profileStoriesEmpty')}
                   </Text>
                 </Stack>
               )}
@@ -166,19 +209,18 @@ const Profile = () => {
 
         <Stack>
           <Text ml={32} size="32px" fw="bold">
-            Viewed stories
+            {t('profileViewedStories')}
           </Text>
 
           {isLoadingStories ? (
             <Group justify="center" align="center" mih={200}>
               <LoadingSpinner size={64} />
             </Group>
-          ) : stories.viewedStories.length > 0 ? (
+          ) : stories.viewedStories?.length > 0 ? (
             <Carousel
-              slideSize="25%"
+              {...sliderConfig}
               slideGap="md"
               align="start"
-              slidesToScroll={4}
               styles={{
                 controls: {
                   paddingInline: 0,
@@ -200,7 +242,7 @@ const Profile = () => {
               <IconCat size={64} color="gray" />
 
               <Text size="xl" c="gray">
-                Nothing here, but us cats...
+                {t('profileStoriesEmpty')}
               </Text>
             </Stack>
           )}
@@ -208,19 +250,18 @@ const Profile = () => {
 
         <Stack>
           <Text ml={32} size="32px" fw="bold">
-            Liked stories
+            {t('profileLikedStories')}
           </Text>
 
           {isLoadingStories ? (
             <Group justify="center" align="center" mih={200}>
               <LoadingSpinner size={64} />
             </Group>
-          ) : stories.likedStories.length > 0 ? (
+          ) : stories.likedStories?.length > 0 ? (
             <Carousel
-              slideSize="25%"
+              {...sliderConfig}
               slideGap="md"
               align="start"
-              slidesToScroll={4}
               styles={{
                 controls: {
                   paddingInline: 0,
@@ -242,7 +283,7 @@ const Profile = () => {
               <IconCat size={64} color="gray" />
 
               <Text size="xl" c="gray">
-                Nothing here, but us cats...
+                {t('profileStoriesEmpty')}
               </Text>
             </Stack>
           )}

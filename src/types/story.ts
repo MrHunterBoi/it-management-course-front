@@ -1,14 +1,17 @@
 import { IGenre } from './genre';
 import { ITag } from './tag';
-import { IUser } from './user';
 
 export interface IStory {
   id: number;
-  creator_id: IUser;
+  creator_id: {
+    id: number;
+    avatar: string;
+    writer_pseudo: string;
+  };
   created: string;
   genre: IGenre;
   tags: ITag[];
-  views_counter: number;
+  views_count: number;
   comments_count: number;
   dislikes_count: number;
   likes_count: number;

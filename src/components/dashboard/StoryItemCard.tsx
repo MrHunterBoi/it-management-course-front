@@ -9,6 +9,7 @@ import {
   Text,
 } from '@mantine/core';
 import { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { getStaticFile } from '../../api/api';
 import styles from '../../styles/components/storyItemCard.module.scss';
@@ -23,6 +24,7 @@ interface PoemItemCardProps extends Partial<PolymorphicComponentProps<CardProps>
 
 const StoryItemCard: FC<PoemItemCardProps> = ({ story, h }) => {
   const { isFetching } = useStoriesStore();
+  const { t } = useTranslation();
 
   return (
     <Link to={`/stories/${story.id}`} style={{ textDecoration: 'none' }}>
@@ -45,7 +47,7 @@ const StoryItemCard: FC<PoemItemCardProps> = ({ story, h }) => {
 
           <Group justify="space-between">
             <Text size="xs" c="gray">
-              By {story.creator_id.writer_pseudo}, {story.created}
+              {t('storyBy')} {story.creator_id.writer_pseudo}, {story.created}
             </Text>
 
             <Badge color={getRandomBadgeColor(story.genre.id)} size="md" variant="dot">

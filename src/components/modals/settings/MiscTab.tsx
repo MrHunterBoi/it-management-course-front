@@ -1,21 +1,23 @@
 import { Button, Container, Stack, Text } from '@mantine/core';
 import { modals } from '@mantine/modals';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { deleteUser } from '../../../api/user';
 import { useUserStore } from '../../../zustand/userStore';
 import SettingsLabel from '../../common/SettingsLabel';
 
 const MiscTab = () => {
+  const { t } = useTranslation();
   const { setUser } = useUserStore();
   const [isDeleting, setIsDeleting] = useState(false);
 
   const handleDeleteButton = () => {
     modals.openConfirmModal({
-      title: 'Alert',
-      children: <Text>Are you sure you want to delete your account?</Text>,
+      title: t('settingsDangerDeleteTitle'),
+      children: <Text>{t('settingsDangerDeleteContent')}</Text>,
       labels: {
-        confirm: "Yes, I'm sure",
-        cancel: 'Actually, nevermind',
+        confirm: t('settingsDangerDeleteConfirm'),
+        cancel: t('settingsDangerDeleteDecline'),
       },
       onConfirm: () => {
         setIsDeleting(true);
@@ -37,10 +39,10 @@ const MiscTab = () => {
   return (
     <Container>
       <Stack align="center">
-        <SettingsLabel title="Danger Zone" />
+        <SettingsLabel title={t('settingsDangerZone')} />
 
         <Button color="red" onClick={handleDeleteButton} w="50%">
-          Delete account
+          {t('settingsDangerDelete')}
         </Button>
       </Stack>
     </Container>

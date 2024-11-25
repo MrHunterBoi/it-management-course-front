@@ -2,37 +2,40 @@ import { Button, Stack, Text, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { modals } from '@mantine/modals';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { signUp } from '../../api/auth';
 import styles from '../../styles/components/authModal.module.scss';
 import { ISignupFormValues } from '../../types/auth';
 import { useUserStore } from '../../zustand/userStore';
 import LoginModal from './LoginModal';
 
-const validatePassword = (value: string) => {
-  if (value.length < 8) {
-    return 'Password must be at least 8 characters long';
-  }
-
-  if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/.test(value)) {
-    return 'Password must contain at least one uppercase letter, one lowercase letter, and one number';
-  }
-
-  return null;
-};
-
-const validateUsername = (value: string) => {
-  if (value.length < 6) {
-    return 'Username must be at least 6 characters long';
-  }
-
-  if (!/^[a-zA-Z0-9]+$/.test(value)) {
-    return 'Username must contain only letters and numbers';
-  }
-
-  return null;
-};
-
 const SignupModal = () => {
+  const { t } = useTranslation();
+
+  const validatePassword = (value: string) => {
+    if (value.length < 8) {
+      return t('authModalSignupErrPasswordLength');
+    }
+
+    if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/.test(value)) {
+      return t('authModalSignupErrPasswordComplexity');
+    }
+
+    return null;
+  };
+
+  const validateUsername = (value: string) => {
+    if (value.length < 6) {
+      return t('authModalSignupErrUsernameLength');
+    }
+
+    if (!/^[a-zA-Z0-9]+$/.test(value)) {
+      return t('authModalSignupErrUsernameSymbols');
+    }
+
+    return null;
+  };
+
   const form = useForm<ISignupFormValues>({
     mode: 'uncontrolled',
     initialValues: {
@@ -44,9 +47,11 @@ const SignupModal = () => {
     validate: {
       username: validateUsername,
       password: validatePassword,
-      password2: (value, values) => (value !== values.password ? 'Passwords do not match' : null),
+      password2: (value, values) =>
+        value !== values.password ? t('authModalSignupErrPasswordNoMatch') : null,
     },
   });
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { setUser } = useUserStore();
 
@@ -69,7 +74,7 @@ const SignupModal = () => {
   const openLoginModal = () => {
     modals.closeAll();
     modals.open({
-      title: 'Log in',
+      title: t('headerLogin'),
       children: <LoginModal />,
     });
   };
@@ -78,7 +83,7 @@ const SignupModal = () => {
     <form onSubmit={form.onSubmit(handleSubmit)}>
       <TextInput
         withAsterisk
-        label="Username"
+        label={t('authModalUsername')}
         placeholder="user123"
         key={form.key('username')}
         disabled={isSubmitting}
@@ -87,7 +92,7 @@ const SignupModal = () => {
 
       <TextInput
         withAsterisk
-        label="Password"
+        label={t('authModalPassword')}
         placeholder="********"
         key={form.key('password')}
         type="password"
@@ -97,7 +102,7 @@ const SignupModal = () => {
 
       <TextInput
         withAsterisk
-        label="Repeat password"
+        label={t('authModalRepeatPassword')}
         placeholder="********"
         type="password"
         key={form.key('password2')}
@@ -107,11 +112,11 @@ const SignupModal = () => {
 
       <Stack justify="center" mt="md" align="center">
         <Button type="submit" loading={isSubmitting}>
-          Sign up
+          {t('headerSignup')}
         </Button>
 
         <Text span>
-          Already have an account?{' '}
+          {t('authModalHaveAccount')}{' '}
           <Text
             span
             c="blue"
@@ -121,7 +126,7 @@ const SignupModal = () => {
             }}
             onClick={openLoginModal}
           >
-            Log in
+            {t('headerLogin')}
           </Text>
         </Text>
       </Stack>

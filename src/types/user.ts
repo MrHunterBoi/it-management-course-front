@@ -24,7 +24,9 @@ export interface IReader {
 export interface IWriter {
   id: number;
   writer_pseudo: string;
-  total_likes_counter: number;
-  total_dislikes_counter: number;
-  total_story_views_counter: number;
+  total_stories_made: number;
+  total_story_dislikes: number;
+  total_story_likes: number;
+  total_story_views: number;
+  total_subscribers: number;
 }

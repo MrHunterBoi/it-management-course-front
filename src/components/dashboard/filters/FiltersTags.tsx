@@ -1,5 +1,6 @@
 import { Group, Select, Stack } from '@mantine/core';
 import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { fetchTags } from '../../../api/tags';
 import { ITag } from '../../../types/tag';
 import { getRandomBadgeColor } from '../../../utils/colors';
@@ -11,6 +12,7 @@ const FiltersTags = () => {
   const [value, setValue] = useState('');
   const [tags, setTags] = useState<ITag[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const { t } = useTranslation();
 
   const tagsOptions = useMemo(() => {
     return tags.filter(tag => !tagsSelectedIds.has(tag.id));
@@ -37,7 +39,7 @@ const FiltersTags = () => {
         data={tagsOptions.map(tag => ({ value: tag.id.toString(), label: tag.tag }))}
         searchable
         clearable
-        placeholder="Search tags..."
+        placeholder={t('filterTagsPlaceholder')}
         rightSection
         onChange={(_value, option) => {
           addTag(+option.value);

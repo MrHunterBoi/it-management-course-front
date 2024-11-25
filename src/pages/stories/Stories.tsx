@@ -46,11 +46,11 @@ const Stories: FC = () => {
       }}
     >
       <Grid flex={1} align="stretch">
-        <Grid.Col span={3}>
+        <Grid.Col span={{ base: 12, sm: 5, md: 3 }}>
           <Filters />
         </Grid.Col>
 
-        <Grid.Col span={9}>
+        <Grid.Col span={{ base: 12, sm: 7, md: 9 }}>
           <Stack>
             <SearchBar />
 

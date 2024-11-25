@@ -2,6 +2,7 @@ import { Button, Container, FileButton, Group, Image, Stack } from '@mantine/cor
 import { useForm } from '@mantine/form';
 import { useDisclosure } from '@mantine/hooks';
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { getStaticFile } from '../../../api/api';
 import { useUserStore } from '../../../zustand/userStore';
 import LabelValue from '../../common/LabelValue';
@@ -9,6 +10,7 @@ import SettingsLabel from '../../common/SettingsLabel';
 import EditAvatarModal from './EditAvatarModal';
 
 const ProfileTab = () => {
+  const { t } = useTranslation();
   const { user } = useUserStore();
   const [openedAvatarModal, { open: openAvatarModal, close: closeAvatarModal }] =
     useDisclosure(false);
@@ -22,7 +24,7 @@ const ProfileTab = () => {
     },
 
     validate: {
-      pseudo: value => (value.length > 0 ? null : 'Please enter your new pseudoname'),
+      pseudo: value => (value?.length > 0 ? null : 'Please enter your new pseudoname'),
     },
   });
 
@@ -50,7 +52,7 @@ const ProfileTab = () => {
               w={150}
               h={150}
               src={getStaticFile(user?.avatar || '')}
-              radius='md'
+              radius="md"
             />
 
             <FileButton
@@ -58,43 +60,66 @@ const ProfileTab = () => {
               accept="image/png, image/jpeg, image/gif"
               resetRef={resetRef}
             >
-              {props => <Button {...props}>Change avatar...</Button>}
+              {props => <Button {...props}>{t('settingsChangeAvatar')}</Button>}
             </FileButton>
           </Stack>
 
           <Stack flex={1} gap={16}>
             <Stack gap={4}>
-              <SettingsLabel title="Profile Information" />
+              <SettingsLabel title={t('settingsProfileInfo')} />
 
-              <LabelValue label="Username" value={user?.user.username} />
+              <LabelValue label={t('settingsProfileUsername')} value={user?.user.username} />
 
-              <LabelValue label="User Type" value={user?.is_premium ? 'Premium' : 'Free'} />
+              <LabelValue
+                label={t('settingsProfileType')}
+                value={
+                  user?.is_premium ? t('settingsProfileTypePremium') : t('settingsProfileTypeFree')
+                }
+              />
             </Stack>
 
             <Stack gap={4}>
-              <SettingsLabel title="Reader Stats" />
+              <SettingsLabel title={t('settingsProfileReader')} />
 
               <LabelValue
-                label="Writers subscribed"
-                value={`${user?.reader.subscribed_to.length}`}
+                label={t('settingsProfileWritersSubscribed')}
+                value={`${user?.reader.subscribed_to?.length || 0}`}
               />
 
-              <LabelValue label="Comments made" value={`${user?.reader.total_comments_made}`} />
+              <LabelValue
+                label={t('settingsProfileCommentsMade')}
+                value={`${user?.reader.total_comments_made}`}
+              />
 
-              <LabelValue label="Liked comments" value={`${user?.reader.total_liked_comments}`} />
+              <LabelValue
+                label={t('settingsProfileLikedComments')}
+                value={`${user?.reader.total_liked_comments || 0}`}
+              />
 
-              <LabelValue label="Stories viewed" value={`${user?.reader.total_stories_viewed}`} />
+              <LabelValue
+                label={t('settingsProfileStoriesViewed')}
+                value={`${user?.reader.total_stories_viewed}`}
+              />
             </Stack>
 
             {user?.writer && (
               <Stack gap={4}>
-                <SettingsLabel title="Writer Stats" />
+                <SettingsLabel title={t('settingsProfileWriter')} />
 
-                <LabelValue label="Dislikes" value={`${user?.writer.total_dislikes_counter}`} />
+                <LabelValue
+                  label={t('settingsProfileDislikes')}
+                  value={`${user?.writer.total_story_dislikes}`}
+                />
 
-                <LabelValue label="Likes" value={`${user?.writer.total_likes_counter}`} />
+                <LabelValue
+                  label={t('settingsProfileLikes')}
+                  value={`${user?.writer.total_story_likes}`}
+                />
 
-                <LabelValue label="Views" value={`${user?.writer.total_story_views_counter}`} />
+                <LabelValue
+                  label={t('settingsProfileViews')}
+                  value={`${user?.writer.total_story_views}`}
+                />
               </Stack>
             )}
           </Stack>

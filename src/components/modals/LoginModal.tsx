@@ -8,8 +8,10 @@ import { ApiError } from '../../types/api';
 import { ISigninFormValues } from '../../types/auth';
 import { useUserStore } from '../../zustand/userStore';
 import SignupModal from './SignupModal';
+import { useTranslation } from 'react-i18next';
 
 const LoginModal = () => {
+  const { t } = useTranslation();
   const form = useForm<ISigninFormValues>({
     mode: 'uncontrolled',
     initialValues: {
@@ -18,8 +20,8 @@ const LoginModal = () => {
     },
 
     validate: {
-      username: value => (value.length === 0 ? 'Please enter username' : null),
-      password: value => (value.length === 0 ? 'Please enter password' : null),
+      username: value => (value.length === 0 ? t('authModalLoginErrUsername') : null),
+      password: value => (value.length === 0 ? t('authModalLoginErrPassword') : null),
     },
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -29,7 +31,7 @@ const LoginModal = () => {
   const openSignUpModal = () => {
     modals.closeAll();
     modals.open({
-      title: 'Sign up',
+      title: t('headerSignup'),
       children: <SignupModal />,
     });
   };
@@ -56,7 +58,7 @@ const LoginModal = () => {
     <form onSubmit={form.onSubmit(handleSubmit)}>
       <TextInput
         withAsterisk
-        label="Username"
+        label={t('authModalUsername')}
         placeholder="user123"
         key={form.key('username')}
         disabled={isSubmitting}
@@ -65,7 +67,7 @@ const LoginModal = () => {
 
       <TextInput
         withAsterisk
-        label="Password"
+        label={t('authModalPassword')}
         placeholder="********"
         type="password"
         key={form.key('password')}
@@ -75,7 +77,7 @@ const LoginModal = () => {
 
       <Stack justify="center" mt="md" align="center">
         <Button type="submit" loading={isSubmitting}>
-          Sign in
+          {t('headerLogin')}
         </Button>
 
         <Text
@@ -89,7 +91,7 @@ const LoginModal = () => {
         </Text>
 
         <Text span>
-          Don't have an account?{' '}
+          {t('authModalNoAccount')}{' '}
           <Text
             span
             c="blue"
@@ -99,7 +101,7 @@ const LoginModal = () => {
             }}
             onClick={openSignUpModal}
           >
-            Sign up
+            {t('headerSignup')}
           </Text>
         </Text>
       </Stack>

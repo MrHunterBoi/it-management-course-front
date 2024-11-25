@@ -92,9 +92,9 @@ const StoriesList = () => {
     </Stack>
   ) : (
     <>
-      <SimpleGrid cols={4}>
+      <SimpleGrid cols={{base: 1, xs: 2, md: 3, xl: 4}}>
         {stories.map(poem => (
-          <StoryItemCard story={poem} key={poem.id} />
+          <StoryItemCard story={poem} key={poem.id} h="100%" />
         ))}
       </SimpleGrid>
 

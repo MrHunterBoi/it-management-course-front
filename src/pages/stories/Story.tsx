@@ -1,13 +1,15 @@
 import { Button, Card, Container, Grid, Group, Image, Stack, Text, Textarea } from '@mantine/core';
-import { IconEye } from '@tabler/icons-react';
+import { IconEye, IconPencil } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { getStaticFile } from '../../api/api';
 import { createComment, getComments } from '../../api/comments';
 import { getStory, reactToStory, StoryResponse } from '../../api/stories';
 import ReactionButton from '../../components/common/LikeButton';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import Comment from '../../components/story/Comment';
+import styles from '../../styles/components/editStoryLinkButton.module.scss';
 import { IComment } from '../../types/comment';
 import { useUserStore } from '../../zustand/userStore';
 
@@ -17,8 +19,10 @@ export interface StoryInfo {
 }
 
 const Story = () => {
+  const { t } = useTranslation();
   const { storyId } = useParams();
   const { user } = useUserStore();
+  const navigate = useNavigate();
   const [storyData, setStoryData] = useState<StoryInfo>({
     story: null,
     comments: [],
@@ -26,6 +30,12 @@ const Story = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
   const [commentBody, setCommentBody] = useState('');
+
+  useEffect(() => {
+    if (!user) {
+      navigate('/');
+    }
+  }, [user]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -68,14 +78,7 @@ const Story = () => {
               ...prev,
               story: {
                 ...prev.story,
-                story: {
-                  ...prev.story?.story,
-                  likes_count: res?.data?.likes,
-                  dislikes_count: res?.data?.dislikes,
-                },
-                ...(type === 'like'
-                  ? { liked: !prev.story?.liked }
-                  : { disliked: !prev.story?.disliked }),
+                story: res?.data,
               },
             } as StoryInfo)
         );
@@ -102,7 +105,7 @@ const Story = () => {
       ) : (
         <>
           <Grid mb={32}>
-            <Grid.Col span={4}>
+            <Grid.Col span={{ base: 12, sm: 4 }}>
               <Card shadow="sm" padding="lg" radius="md" withBorder>
                 <Stack>
                   <Image
@@ -119,7 +122,7 @@ const Story = () => {
                   <Grid align="end">
                     <Grid.Col span={8}>
                       <Stack gap={4}>
-                        <Text fw="bold">Written by:</Text>
+                        <Text fw="bold">{t('storyWrittenBy')}:</Text>
 
                         <Group align="end">
                           <Image
@@ -134,7 +137,7 @@ const Story = () => {
                           />
 
                           <Stack gap={0}>
-                            <Text>{storyData.story?.story?.creator_id.writer?.writer_pseudo}</Text>
+                            <Text>{storyData.story?.story?.creator_id.writer_pseudo}</Text>
 
                             <Text c="gray">{storyData.story?.story?.created}</Text>
                           </Stack>
@@ -147,19 +150,19 @@ const Story = () => {
                         <ReactionButton
                           variant="like"
                           value={storyData.story?.story?.likes_count}
-                          isFilled={storyData.story?.liked} // TODO: Replace with is_liked_by_user later
+                          isFilled={storyData.story?.liked}
                           onClick={() => handleReactToStory('like')}
                         />
 
                         <ReactionButton
                           variant="dislike"
                           value={storyData.story?.story?.dislikes_count}
-                          isFilled={storyData.story?.disliked} // TODO: here as well
+                          isFilled={storyData.story?.disliked}
                           onClick={() => handleReactToStory('dislike')}
                         />
 
                         <Group gap={8}>
-                          <Text>{storyData.story?.story?.views_counter}</Text>
+                          <Text>{storyData.story?.story?.views_count}</Text>
 
                           <IconEye color="#228BE6" />
                         </Group>
@@ -170,30 +173,66 @@ const Story = () => {
               </Card>
             </Grid.Col>
 
-            <Grid.Col span={8}>
-              <Card shadow="sm" padding="lg" radius="md" withBorder>
-                <div
-                  dangerouslySetInnerHTML={{
-                    __html: storyData.story?.story?.post_text || '',
-                  }}
-                />
-              </Card>
+            <Grid.Col span={{ base: 12, sm: 8 }}>
+              <Stack>
+                {storyData.story?.owner && (
+                  <Link
+                    to={`/stories/${storyData.story?.story?.id}/edit`}
+                    className={styles.btnMobile}
+                  >
+                    <Button fullWidth leftSection={<IconPencil />}>
+                      {t('storyEdit')}
+                    </Button>
+                  </Link>
+                )}
+
+                <Card shadow="sm" padding="lg" radius="md" withBorder h="100%">
+                  <Stack>
+                    <Group justify="center">
+                      <Text fw="bold" size="xl">
+                        {storyData.story?.story.post_title}
+                      </Text>
+
+                      {storyData.story?.owner && (
+                        <Link
+                          to={`/stories/${storyData.story?.story?.id}/edit`}
+                          style={{ position: 'absolute', right: '16px' }}
+                          className={styles.btnDesktop}
+                        >
+                          <Button leftSection={<IconPencil />}>{t('storyEdit')}</Button>
+                        </Link>
+                      )}
+                    </Group>
+
+                    <div
+                      dangerouslySetInnerHTML={{
+                        __html: storyData.story?.story?.post_text || '',
+                      }}
+                    />
+                  </Stack>
+                </Card>
+              </Stack>
             </Grid.Col>
           </Grid>
 
           <Stack>
             <Text size="28px" fw="bold">
-              Comments
+              {t('storyComments')}
             </Text>
 
             <Group align="start">
-              <Image w={48} h={48} src={getStaticFile(user?.avatar || '')} />
+              <Image
+                w={48}
+                h={48}
+                src={getStaticFile(user?.avatar || '')}
+                style={{ objectFit: 'cover', borderRadius: '9999px', aspectRatio: '1/1' }}
+              />
 
               <Stack flex={1}>
                 <Textarea
                   value={commentBody}
                   onChange={e => setCommentBody(e.target.value)}
-                  placeholder="Add a comment..."
+                  placeholder={t('storyCommentPlaceholder')}
                   rows={2}
                 />
 
@@ -202,7 +241,7 @@ const Story = () => {
                   loading={isSubmittingComment}
                   style={{ width: 'fit-content' }}
                 >
-                  Comment
+                  {t('storyCommentPost')}
                 </Button>
               </Stack>
             </Group>

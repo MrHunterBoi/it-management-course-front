@@ -7,8 +7,10 @@ import { updateUser } from '../../../api/user';
 import { useUserStore } from '../../../zustand/userStore';
 import SettingsLabel from '../../common/SettingsLabel';
 import BecomeWriterModal from './BecomeWriterModal';
+import { useTranslation } from 'react-i18next';
 
 const WritershipTab = () => {
+  const { t } = useTranslation();
   const { user, setUser } = useUserStore();
   const [openedWriterModal, { open: openWriterModal, close: closeWriterModal }] =
     useDisclosure(false);
@@ -22,7 +24,7 @@ const WritershipTab = () => {
     },
 
     validate: {
-      pseudo: value => (value.length > 0 ? null : 'Please enter your new pseudoname'),
+      pseudo: value => (value.length > 0 ? null : t('settingsWriterBecomeError')),
     },
   });
 
@@ -56,12 +58,12 @@ const WritershipTab = () => {
   return (
     <Container>
       <Stack align="center">
-        <SettingsLabel title="Writer Information" />
+        <SettingsLabel title={t('settingsWriterInfo')} />
 
         {user?.writer ? (
           <form onSubmit={form.onSubmit(handleSubmitPseudo)} style={{ width: '100%' }}>
             <Text fw="bold" size="sm">
-              Pseudoname:
+              {t('settingsWriterPseudoname')}:
             </Text>
 
             <Group align="start">
@@ -91,9 +93,9 @@ const WritershipTab = () => {
           </form>
         ) : (
           <Stack>
-            <Text size="sm">You are not a writer yet...</Text>
+            <Text size="sm">{t('settingsWriterNotWriter')}</Text>
 
-            <Button onClick={openWriterModal}>Become a writer</Button>
+            <Button onClick={openWriterModal}>{t('settingsWriterBecome')}</Button>
           </Stack>
         )}
       </Stack>

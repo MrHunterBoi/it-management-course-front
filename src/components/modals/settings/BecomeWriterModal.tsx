@@ -4,6 +4,7 @@ import { IconCheck } from '@tabler/icons-react';
 import { FC, useState } from 'react';
 import { becomeWriter } from '../../../api/user';
 import { useUserStore } from '../../../zustand/userStore';
+import { useTranslation } from 'react-i18next';
 
 interface BecomeWriterModalProps {
   openedWriterModal: boolean;
@@ -11,6 +12,7 @@ interface BecomeWriterModalProps {
 }
 
 const BecomeWriterModal: FC<BecomeWriterModalProps> = ({ closeWriterModal, openedWriterModal }) => {
+  const { t } = useTranslation();
   const { setUser } = useUserStore();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -21,7 +23,7 @@ const BecomeWriterModal: FC<BecomeWriterModalProps> = ({ closeWriterModal, opene
     },
 
     validate: {
-      pseudo: value => (value.length > 0 ? null : 'Please enter your pseudoname'),
+      pseudo: value => (value.length > 0 ? null : t('settingsWriterBecomeError')),
     },
   });
 
@@ -45,12 +47,12 @@ const BecomeWriterModal: FC<BecomeWriterModalProps> = ({ closeWriterModal, opene
       zIndex={1000}
       opened={openedWriterModal}
       onClose={closeWriterModal}
-      title="Become a writer"
+      title={t('settingsWriterBecome')}
     >
       <form onSubmit={form.onSubmit(handleButtonClick)}>
         <Group>
           <TextInput
-            placeholder="Your pseudoname..."
+            placeholder={t('settingsWriterBecomePlaceholder')}
             key={form.key('pseudo')}
             flex={1}
             disabled={isLoading}

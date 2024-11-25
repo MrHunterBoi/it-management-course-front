@@ -1,5 +1,6 @@
 import { Box, Button, Card, Group, Image, Stack, Text, Textarea } from '@mantine/core';
 import { FC, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { getStaticFile } from '../../api/api';
 import { createComment, getComments, reactToComment } from '../../api/comments';
 import styles from '../../styles/components/comment.module.scss';
@@ -11,9 +12,11 @@ import LoadingSpinner from '../common/LoadingSpinner';
 interface CommentProps {
   comment: IComment;
   setComments: (newComment: IComment) => void;
+  showReplies?: boolean;
 }
 
-const Comment: FC<CommentProps> = ({ comment, setComments }) => {
+const Comment: FC<CommentProps> = ({ comment, setComments, showReplies = true }) => {
+  const { t } = useTranslation();
   const [isShowingReplies, setIsShowingReplies] = useState(false);
   const { user } = useUserStore();
   const [replies, setReplies] = useState<IComment[]>([]);
@@ -42,12 +45,7 @@ const Comment: FC<CommentProps> = ({ comment, setComments }) => {
   const handleReactToComment = (type: 'like' | 'dislike') => {
     reactToComment(`${comment.id}` || '', type)
       .then(res => {
-        setComments({
-          ...comment,
-          likes_count: res?.data?.likes_count || 0,
-          dislikes_count: res?.data?.dislikes_count || 0,
-          replies_count: res?.data.replies_count || 0,
-        });
+        setComments(res?.data!);
       })
       .catch(console.error);
   };
@@ -94,41 +92,44 @@ const Comment: FC<CommentProps> = ({ comment, setComments }) => {
               <ReactionButton
                 variant="like"
                 value={comment?.likes_count}
-                //   isFilled={storyData.story?.is_liked_by_user} // TODO: Replace with is_liked_by_user later
+                isFilled={comment?.liked}
                 onClick={() => handleReactToComment('like')}
               />
 
               <ReactionButton
                 variant="dislike"
                 value={comment.dislikes_count}
-                //   isFilled={storyData.story?.is_disliked_by_user} // TODO: here as well
+                isFilled={comment?.disliked}
                 onClick={() => handleReactToComment('dislike')}
               />
             </Group>
 
-            {isLoading ? (
-              <Box pt={8}>
-                <LoadingSpinner color="#228BE6" />
-              </Box>
-            ) : isShowingReplies ? (
-              <Button
-                onClick={() => setIsShowingReplies(false)}
-                px={0}
-                variant="white"
-                classNames={{ label: styles.repliesBtn }}
-              >
-                Hide
-              </Button>
-            ) : (
-              <Button
-                onClick={handleGetReplies}
-                px={0}
-                variant="white"
-                classNames={{ label: styles.repliesBtn }}
-              >
-                {comment.replies_count > 0 ? `${comment.replies_count} Replies` : 'Reply'}
-              </Button>
-            )}
+            {showReplies &&
+              (isLoading ? (
+                <Box pt={8}>
+                  <LoadingSpinner color="#228BE6" />
+                </Box>
+              ) : isShowingReplies ? (
+                <Button
+                  onClick={() => setIsShowingReplies(false)}
+                  px={0}
+                  variant="white"
+                  classNames={{ label: styles.repliesBtn }}
+                >
+                  {t('storyHide')}
+                </Button>
+              ) : (
+                <Button
+                  onClick={handleGetReplies}
+                  px={0}
+                  variant="white"
+                  classNames={{ label: styles.repliesBtn }}
+                >
+                  {comment.replies_count > 0
+                    ? `${comment.replies_count} ${t('storyReplies')}`
+                    : t('storyReply')}
+                </Button>
+              ))}
           </Stack>
         </Group>
       </Card>
@@ -138,17 +139,27 @@ const Comment: FC<CommentProps> = ({ comment, setComments }) => {
           <Stack gap={16}>
             {isShowingReplies &&
               replies.map(reply => (
-                <Comment key={reply.id} comment={reply} setComments={handleChangeReplies} />
+                <Comment
+                  key={reply.id}
+                  comment={reply}
+                  setComments={handleChangeReplies}
+                  showReplies={false}
+                />
               ))}
 
             <Group align="start">
-              <Image w={48} h={48} src={getStaticFile(user?.avatar || '')} />
+              <Image
+                w={48}
+                h={48}
+                src={getStaticFile(user?.avatar || '')}
+                style={{ objectFit: 'cover', borderRadius: '9999px', aspectRatio: '1/1' }}
+              />
 
               <Stack flex={1}>
                 <Textarea
                   value={commentBody}
                   onChange={e => setCommentBody(e.target.value)}
-                  placeholder="Add a comment..."
+                  placeholder={t('storyCommentPlaceholder')}
                   rows={2}
                 />
 
@@ -157,7 +168,7 @@ const Comment: FC<CommentProps> = ({ comment, setComments }) => {
                   loading={isSubmittingComment}
                   style={{ width: 'fit-content' }}
                 >
-                  Comment
+                  {t('storyCommentPost')}
                 </Button>
               </Stack>
             </Group>

@@ -2,56 +2,43 @@ import { Box, Button, Group, Modal, Slider, Stack } from '@mantine/core';
 import { IconCheck, IconX } from '@tabler/icons-react';
 import { FC, useRef, useState, WheelEvent } from 'react';
 import AvatarEditor from 'react-avatar-editor';
-import { updateUser } from '../../../api/user';
-import { useUserStore } from '../../../zustand/userStore';
 import { useTranslation } from 'react-i18next';
 
-interface EditAvatarModalProps {
-  avatar: File | null;
-  openedAvatarModal: boolean;
-  closeAvatarModal: () => void;
+interface ChangeStoryImageModalProps {
+  image: File | null;
+  openedModal: boolean;
+  closeModal: () => void;
+  setImage: (image: File | null) => void;
 }
 
-const EditAvatarModal: FC<EditAvatarModalProps> = ({
-  closeAvatarModal,
-  openedAvatarModal,
-  avatar,
+const ChangeStoryImageModal: FC<ChangeStoryImageModalProps> = ({
+  closeModal,
+  openedModal,
+  image,
+  setImage,
 }) => {
   const { t } = useTranslation();
-  const { user, setUser } = useUserStore();
   const [scale, setScale] = useState(1);
-  const [isLoading, setIsLoading] = useState(false);
   const editorRef = useRef<AvatarEditor>(null);
 
-  const handleSubmitAvatar = () => {
-    if (editorRef.current && avatar) {
+  const handleSetImage = () => {
+    if (editorRef.current && image) {
       editorRef.current.getImage().toBlob(blob => {
         if (!blob) {
           return;
         }
-        const newAvatar = new File([blob], `avatar_${user?.id}`, {
+        const croppedImage = new File([blob], 'story_image', {
           type: blob.type,
           lastModified: new Date().getTime(),
         });
 
-        const formData = new FormData();
-        formData.append('avatar', newAvatar);
-
-        setIsLoading(true);
-        updateUser(formData)
-          // TODO: Notification would be nice here
-          .then(res => {
-            if (res?.success) {
-              setUser(res.data.profile);
-              closeAvatarModal();
-            }
-          })
-          .finally(() => setIsLoading(false));
+        setImage(croppedImage);
+        closeModal();
       });
     }
   };
 
-  if (!avatar) {
+  if (!image) {
     return null;
   }
 
@@ -66,9 +53,10 @@ const EditAvatarModal: FC<EditAvatarModalProps> = ({
   return (
     <Modal
       zIndex={1000}
-      opened={openedAvatarModal}
-      onClose={closeAvatarModal}
-      title={t('settingsChangeAvatarTitle')}
+      opened={openedModal}
+      onClose={closeModal}
+      title={t('createStorySetImage')}
+      size="lg"
     >
       <Stack align="center">
         <Box
@@ -80,7 +68,7 @@ const EditAvatarModal: FC<EditAvatarModalProps> = ({
           onWheel={handleScroll}
         >
           <AvatarEditor
-            image={avatar}
+            image={image}
             border={0}
             scale={scale}
             rotate={0}
@@ -104,11 +92,11 @@ const EditAvatarModal: FC<EditAvatarModalProps> = ({
         />
 
         <Group w="100%">
-          <Button onClick={handleSubmitAvatar} loading={isLoading} color="green" flex={1}>
+          <Button onClick={handleSetImage} color="green" flex={1}>
             <IconCheck />
           </Button>
 
-          <Button onClick={closeAvatarModal} color="red" flex={1}>
+          <Button onClick={closeModal} color="red" flex={1}>
             <IconX />
           </Button>
         </Group>
@@ -117,4 +105,4 @@ const EditAvatarModal: FC<EditAvatarModalProps> = ({
   );
 };
 
-export default EditAvatarModal;
+export default ChangeStoryImageModal;
