@@ -37,7 +37,7 @@ const Home = () => {
 
             {user.writer && (
               <HomeCategoryLink
-                image={'public/create_story.jpg'}
+                image={'create_story.jpg'}
                 to="/stories/new"
                 content={t('homeLinkCreate')}
               />
