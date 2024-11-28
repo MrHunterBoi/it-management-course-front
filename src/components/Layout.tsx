@@ -14,6 +14,8 @@ const Layout = () => {
     const refresh = localStorage.getItem('refresh');
 
     if (!token && !refresh) {
+      setIsLoading(false);
+
       return;
     }
 
