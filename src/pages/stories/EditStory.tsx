@@ -272,7 +272,7 @@ const EditStory = () => {
 
             <Group justify="center">
               <Text fw="bold" size="xl">
-                {t('createStoryTagsPlaceholder')}
+                {t('createStoryContent')}
               </Text>
             </Group>
 

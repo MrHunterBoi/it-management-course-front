@@ -57,8 +57,12 @@ const Comment: FC<CommentProps> = ({ comment, setComments, showReplies = true })
   const submitComment = () => {
     setIsSubmittingComment(true);
     createComment({ comment_body: commentBody, parent_comment_id: `${comment.id}` || '' })
-      .then(() => {
-        // TODO: Add comment to comments array
+      .then(res => {
+        if (!res?.data) {
+          return;
+        }
+
+        setReplies(prev => [...prev, res.data]);
         setCommentBody('');
       })
       .finally(() => setIsSubmittingComment(false));

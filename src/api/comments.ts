@@ -47,7 +47,7 @@ export const createComment = async (
   data: Partial<Record<CommentsQueryParams, string>> & {
     comment_body: string;
   }
-): Promise<ApiResponse<{}> | undefined> => {
+): Promise<ApiResponse<IComment> | undefined> => {
   try {
     const res = await fetchApi('/comments/manipulate', {
       method: 'POST',

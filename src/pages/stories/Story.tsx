@@ -89,8 +89,15 @@ const Story = () => {
   const submitComment = () => {
     setIsSubmittingComment(true);
     createComment({ comment_body: commentBody, story_id: storyId || '' })
-      .then(() => {
-        // TODO: Add comment to comments array
+      .then(res => {
+        if (!res?.data) {
+          return;
+        }
+
+        setStoryData(prev => ({
+          ...prev,
+          comments: [res?.data, ...prev.comments],
+        }));
         setCommentBody('');
       })
       .finally(() => setIsSubmittingComment(false));

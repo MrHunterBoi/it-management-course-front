@@ -253,7 +253,7 @@ const CreateNewStory = () => {
 
             <Group justify="center">
               <Text fw="bold" size="xl">
-                {t('createStoryTagsPlaceholder')}
+                {t('createStoryContent')}
               </Text>
             </Group>
 
