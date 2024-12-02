@@ -8,6 +8,8 @@ RUN npm install
 
 COPY . .
 
+COPY .env.local /app/.env.local
+
 EXPOSE 3000
 
 RUN npm run build
